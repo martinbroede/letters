@@ -193,6 +193,120 @@ button:hover {
   margin-top: 4vw;
 }
 
+/* Hourglass card */
+.hourglass-color {
+  color: #c4a000;
+}
+
+.hourglass-card {
+  cursor: pointer;
+}
+
+.hourglass-card:active {
+  transform: scale(0.98);
+}
+
+.hourglass-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 60%;
+}
+
+.hourglass {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.hourglass-top,
+.hourglass-bottom {
+  width: 100%;
+  height: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hourglass-top {
+  background: transparent;
+  clip-path: polygon(0 0, 100% 0, 55% 100%, 45% 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 3px solid rgba(135, 207, 235, 0.822);
+  border-bottom: none;
+  box-shadow: inset 0 0 20px rgba(135, 206, 235, 0.3);
+}
+
+.hourglass-bottom {
+  background: transparent;
+  clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+  border: 3px solid rgba(135, 206, 235, 0.6);
+  border-top: none;
+  box-shadow: inset 0 0 20px rgba(135, 206, 235, 0.3);
+}
+
+.hourglass-middle {
+  display: none;
+}
+
+.sand-top,
+.sand-bottom {
+  position: absolute;
+  left: 1%;
+  right: 1%;
+  background: linear-gradient(180deg, #f4d03f 0%, #c4a000 100%);
+}
+
+.sand-top {
+  bottom: 0;
+  height: 100%;
+  clip-path: polygon(0 0, 100% 0, 55% 100%, 45% 100%);
+}
+
+.sand-bottom {
+  bottom: 0;
+  height: 0%;
+  clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+}
+
+.hourglass-running .hourglass {
+  animation: hourglass-pulse 1s ease-in-out infinite;
+}
+
+.hourglass-done .hourglass {
+  animation: hourglass-shake 0.5s ease-in-out;
+}
+
+@keyframes hourglass-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes hourglass-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
 .card-border {
   position: absolute;
   top: 0.5vw;
