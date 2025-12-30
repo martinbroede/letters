@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Card Game</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cards">
+    <meta name="theme-color" content="#1a5c2e">
+    <meta name="msapplication-navbutton-color" content="#1a5c2e">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+    
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="setup-screen" id="setupScreen">
+      <p>How many cards do you want to play with?</p>
+      <div class="controls">
+        <button onclick="selectCardCount(1)">1</button>
+        <button onclick="selectCardCount(2)">2</button>
+        <button onclick="selectCardCount(3)">3</button>
+        <button onclick="selectCardCount(4)">4</button>
+        <button onclick="selectCardCount(5)">5</button>
+      </div>
+    </div>
+
+    <div class="cards-container" id="cardsContainer"></div>
+
+    <button class="settings-icon" id="settingsIcon" onclick="showSetup()">⚙</button>
+
+    <script src="index.js"></script>
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('Service Worker registered'))
+            .catch((err) => console.log('Service Worker registration failed:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
