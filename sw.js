@@ -1,7 +1,7 @@
 // create random cache on localhost, fixed name on production:
 const CACHE_NAME = ["localhost", "127.0.0.1"].includes(self.location.hostname)
   ? "cardgame-cache-" + Math.random().toString(36).substring(2, 15)
-  : "cardgame-cache-v0.0.1";
+  : "cardgame-cache-v0.0.3";
 
 const ASSETS = [
   "/",

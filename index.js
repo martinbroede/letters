@@ -4,18 +4,55 @@ const ALL_SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + SPECIAL_SYMBOL + SPECIAL_SYMB
 // special symbol included twice to increase its chances of being selected
 
 const STORAGE_KEY = "cardgame_card_count";
+const STORAGE_SEED = "cardgame_seed";
+const STORAGE_ITERATION = "cardgame_iteration";
 const HOURGLASS_DURATION = 90; // seconds
 
 let hourglassTimer = null;
 
+// Seeded random number generator (Mulberry32)
+let currentSeed = 1;
+let currentIteration = 0;
+
+function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+let seededRandom = mulberry32(currentSeed);
+
+function initializeRandom(seed, iteration) {
+  currentSeed = seed;
+  currentIteration = iteration;
+  // Recreate the random generator from the seed
+  seededRandom = mulberry32(seed);
+  // Advance to the current iteration
+  for (let i = 0; i < iteration * 100; i++) {
+    seededRandom();
+  }
+}
+
+function nextIteration() {
+  currentIteration++;
+  localStorage.setItem(STORAGE_ITERATION, currentIteration.toString());
+}
+
+function seededRandomValue() {
+  return seededRandom();
+}
+
 function getRandomSymbol(usedSymbols) {
   const available = ALL_SYMBOLS.split("").filter((s) => !usedSymbols.has(s));
   if (available.length === 0) return null;
-  return available[Math.floor(Math.random() * available.length)];
+  return available[Math.floor(seededRandomValue() * available.length)];
 }
 
 function getRandomColor() {
-  return Math.random() < 0.5 ? "red" : "green";
+  return seededRandomValue() < 0.5 ? "red" : "green";
 }
 
 function getRandomAnimation() {
@@ -31,11 +68,11 @@ function getRandomAnimation() {
     "wobble-in",
     "elastic",
   ];
-  return animations[Math.floor(Math.random() * animations.length)];
+  return animations[Math.floor(seededRandomValue() * animations.length)];
 }
 
 function createCard(symbol, color, animation, delay) {
-  const rotation = Math.random() * 90 - 45; // Random rotation between -15 and 15 degrees
+  const rotation = seededRandomValue() * 90 - 45; // Random rotation between -45 and 45 degrees
 
   if (symbol === HOURGLASS_SYMBOL) {
     return `
@@ -139,11 +176,15 @@ function dealCards(count) {
     hourglassTimer = null;
   }
 
+  // Advance to next iteration for deterministic randomness
+  nextIteration();
+  updateIterationDisplay();
+
   const usedSymbols = new Set();
   const cards = [];
 
   // Always add one hourglass card
-  const hourglassPosition = Math.floor(Math.random() * (count + 1));
+  const hourglassPosition = Math.floor(seededRandomValue() * (count + 1));
 
   for (let i = 0; i < count + 1; i++) {
     if (i === hourglassPosition) {
@@ -166,6 +207,14 @@ function dealCards(count) {
 
 function selectCardCount(count) {
   localStorage.setItem(STORAGE_KEY, count.toString());
+
+  // Get seed from slider
+  const seedSlider = document.getElementById("seedSlider");
+  const seed = parseInt(seedSlider.value, 10);
+  localStorage.setItem(STORAGE_SEED, seed.toString());
+  localStorage.setItem(STORAGE_ITERATION, "0");
+
+  initializeRandom(seed, 0);
   startGame(count);
 }
 
@@ -191,8 +240,15 @@ function hideSetup() {
 // Initialize on page load
 function init() {
   const savedCount = localStorage.getItem(STORAGE_KEY);
+  const savedSeed = localStorage.getItem(STORAGE_SEED);
+  const savedIteration = localStorage.getItem(STORAGE_ITERATION);
 
-  if (savedCount) {
+  if (savedCount && savedSeed) {
+    // Restore game state
+    const seed = parseInt(savedSeed, 10);
+    const iteration = parseInt(savedIteration || "0", 10);
+    initializeRandom(seed, iteration);
+
     // Card count already selected, start game directly
     hideSetup();
     dealCards(parseInt(savedCount, 10));
@@ -211,6 +267,17 @@ function init() {
       dealCards(parseInt(count, 10));
     }
   });
+}
+
+function updateSeedDisplay(value) {
+  document.getElementById("seedValue").textContent = value;
+}
+
+function updateIterationDisplay() {
+  const display = document.getElementById("iterationDisplay");
+  if (display) {
+    display.textContent = `#${currentIteration}`;
+  }
 }
 
 init();

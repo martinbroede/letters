@@ -32,8 +32,13 @@
         <button onclick="selectCardCount(4)">4</button>
         <button onclick="selectCardCount(5)">5</button>
       </div>
+      <div class="seed-control">
+        <label for="seedSlider">Seed: <span id="seedValue">50</span></label>
+        <input type="range" id="seedSlider" min="1" max="100" value="50" oninput="updateSeedDisplay(this.value)" />
+      </div>
     </div>
 
+    <div class="iteration-display" id="iterationDisplay"></div>
     <div class="cards-container" id="cardsContainer"></div>
 
     <button class="settings-icon" id="settingsIcon" onclick="showSetup()">⚙</button>
