@@ -5,7 +5,7 @@ const CACHE_NAME = ["localhost", "127.0.0.1"].includes(self.location.hostname)
 
 const ASSETS = [
   "/",
-  "/favicon.ico",
+  "/favicon.svg",
   "/index.html",
   "/index.css",
   "/index.js",
@@ -13,6 +13,13 @@ const ASSETS = [
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
 ];
+
+// add /letters/ to each ASSET when hosted on GitHub Pages:
+if (self.location.hostname === "martinbroede.github.io") {
+  for (let i = 0; i < ASSETS.length; i++) {
+    ASSETS[i] = "/letters" + ASSETS[i];
+  }
+}
 
 // Install service worker and cache assets
 self.addEventListener("install", (event) => {
@@ -46,6 +53,7 @@ self.addEventListener("fetch", (event) => {
             // Cache new requests
             if (event.request.method === "GET") {
               const responseClone = fetchResponse.clone();
+              console.log("Cached new resource:", event.request.url);
               caches.open(CACHE_NAME).then((cache) => {
                 cache.put(event.request, responseClone);
               });
