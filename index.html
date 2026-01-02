@@ -48,8 +48,9 @@
       // Register Service Worker
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
+          const swPath = `/${location.pathname.split("/")[1]}/sw.js`.replace("//", "/");
           navigator.serviceWorker
-            .register("/sw.js")
+            .register(swPath)
             .then((reg) => console.log("Service Worker registered"))
             .catch((err) => console.log("Service Worker registration failed:", err));
         });
